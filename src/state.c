@@ -370,12 +370,10 @@ static void find_head(game_state_t* state, unsigned int snum) {
   unsigned int r = s->tail_row;
   unsigned int c = s->tail_col;
 
-  unsigned int pasos = 0;
   char curr = get_board_at(state, r, c);
+  unsigned int limit = 1000;
 
-  while (!is_head(curr)) {
-    if (pasos++ > 1000) break;
-
+  while (!is_head(curr) && limit--) {
     unsigned int next_r = get_next_row(r, curr);
     unsigned int next_c = get_next_col(c, curr);
 
@@ -391,6 +389,7 @@ static void find_head(game_state_t* state, unsigned int snum) {
   s->head_row = r;
   s->head_col = c;
 }
+
 
 
 
