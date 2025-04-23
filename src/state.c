@@ -371,15 +371,21 @@ static void find_head(game_state_t* state, unsigned int snum) {
   unsigned int c = s->tail_col;
   char curr = get_board_at(state, r, c);
 
-  while (!is_head(curr)) {
+  unsigned int limit = 1000;
+  while (!is_head(curr) && limit--) {
     r = get_next_row(r, curr);
     c = get_next_col(c, curr);
+
+    if (r >= state->num_rows || state->board[r] == NULL) break;
+    if (state->board[r][c] == '\0') break;
+
     curr = get_board_at(state, r, c);
   }
 
   s->head_row = r;
   s->head_col = c;
 }
+
 
 
 /* Tarea 6.2 */
