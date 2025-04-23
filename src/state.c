@@ -369,22 +369,29 @@ static void find_head(game_state_t* state, unsigned int snum) {
   snake_t* s = &state->snakes[snum];
   unsigned int r = s->tail_row;
   unsigned int c = s->tail_col;
+
+  unsigned int pasos = 0;
   char curr = get_board_at(state, r, c);
 
-  unsigned int limit = 1000;
-  while (!is_head(curr) && limit--) {
-    r = get_next_row(r, curr);
-    c = get_next_col(c, curr);
+  while (!is_head(curr)) {
+    if (pasos++ > 1000) break;
 
-    if (r >= state->num_rows || state->board[r] == NULL) break;
-    if (state->board[r][c] == '\0') break;
+    unsigned int next_r = get_next_row(r, curr);
+    unsigned int next_c = get_next_col(c, curr);
 
+    if (next_r >= state->num_rows) break;
+    if (state->board[next_r] == NULL) break;
+    if (state->board[next_r][next_c] == '\0') break;
+
+    r = next_r;
+    c = next_c;
     curr = get_board_at(state, r, c);
   }
 
   s->head_row = r;
   s->head_col = c;
 }
+
 
 
 
