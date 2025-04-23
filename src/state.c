@@ -397,29 +397,34 @@ static void find_head(game_state_t* state, unsigned int snum) {
 
 /* Tarea 6.2 */
 game_state_t* initialize_snakes(game_state_t* state) {
-  unsigned int capacidad = 4;
-  unsigned int cantidad = 0;
-  snake_t* serpientes = malloc(sizeof(snake_t) * capacidad);
+  unsigned int capacity = 4;
+  unsigned int count = 0;
+  snake_t* snakes = malloc(sizeof(snake_t) * capacity);
 
   for (unsigned int i = 0; i < state->num_rows; ++i) {
+    if (!state->board[i]) continue;
+
     for (unsigned int j = 0; state->board[i][j] != '\0'; ++j) {
       char ch = state->board[i][j];
       if (is_tail(ch)) {
-        if (cantidad == capacidad) {
-          capacidad *= 2;
-          serpientes = realloc(serpientes, sizeof(snake_t) * capacidad);
+        if (count == capacity) {
+          capacity *= 2;
+          snakes = realloc(snakes, sizeof(snake_t) * capacity);
         }
-        serpientes[cantidad].tail_row = i;
-        serpientes[cantidad].tail_col = j;
-        serpientes[cantidad].live = true;
-        find_head(state, cantidad);
-        cantidad++;
+
+        snakes[count].tail_row = i;
+        snakes[count].tail_col = j;
+        snakes[count].live = true;
+
+        find_head(state, count);  // <- Aquí entra el bug si i,j estaban mal
+
+        count++;
       }
     }
   }
 
-  state->snakes = serpientes;
-  state->num_snakes = cantidad;
+  state->snakes = snakes;
+  state->num_snakes = count;
 
   return state;
 }
