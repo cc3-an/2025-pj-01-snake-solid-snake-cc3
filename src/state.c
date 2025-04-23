@@ -319,35 +319,39 @@ game_state_t* load_board(char* filename) {
   FILE* f = fopen(filename, "r");
   if (!f) return NULL;
 
-  unsigned int rows_allocated = 8;
-  unsigned int rows_used = 0;
-  char** board = malloc(sizeof(char*) * rows_allocated);
+  unsigned int rows_alloc = 8;
+  unsigned int rows = 0;
+  char** board = malloc(sizeof(char*) * rows_alloc);
 
   char buffer[256];
   while (fgets(buffer, sizeof(buffer), f)) {
     size_t len = strlen(buffer);
-    if (buffer[len - 1] == '\n') buffer[--len] = '\0';
 
-    if (rows_used == rows_allocated) {
-      rows_allocated *= 2;
-      board = realloc(board, sizeof(char*) * rows_allocated);
+    if (len > 0 && buffer[len - 1] == '\n') {
+      buffer[--len] = '\0';
     }
 
-    board[rows_used] = malloc(len + 1);
-    strcpy(board[rows_used], buffer);
-    rows_used++;
+    if (rows == rows_alloc) {
+      rows_alloc *= 2;
+      board = realloc(board, sizeof(char*) * rows_alloc);
+    }
+
+    board[rows] = malloc(len + 1);
+    strcpy(board[rows], buffer);
+    rows++;
   }
 
   fclose(f);
 
   game_state_t* state = malloc(sizeof(game_state_t));
-  state->num_rows = rows_used;
+  state->num_rows = rows;
   state->board = board;
   state->num_snakes = 0;
   state->snakes = NULL;
 
   return state;
 }
+
 
 
 
